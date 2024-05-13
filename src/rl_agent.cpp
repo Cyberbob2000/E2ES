@@ -191,7 +191,6 @@ int main(int argc, char **argv)
   int counter = -1;
   char myTrajectory[]={'1','w','w','w','w','w','w','w','w','w','d','d','d','d','d','d','d','d','d','y','y','y','y','y','y','y'};
   while(ros::ok()){
-    counter = counter + 1;
     cout << counter << endl;
     if( current_state.mode != "OFFBOARD" && (ros::Time::now() - last_request > ros::Duration(1.0)))
     {
@@ -230,8 +229,13 @@ int main(int argc, char **argv)
     //int c = getch_noblocking();
     //fseek(stdin,0,SEEK_END);
     //Fly fix trajectory
-    char c = myTrajectory[counter];
-    cout << c << "This char ! " << endl;
+    if(mission_state == KEYBOARD_CTR){
+      if (counter <= 20){
+        char c = myTrajectory[counter];
+        cout << c << "This char ! " << endl;
+        counter = counter + 1;
+      }
+    }
     //flushinp();
 
     if (c == '1')
@@ -315,6 +319,7 @@ int main(int argc, char **argv)
       {
         cout << "Takeoff finished. My Code ! Updated" << endl;
         mission_state = KEYBOARD_CTR;
+        counter = counter + 1;
         last_request = ros::Time::now();
       }
     }
