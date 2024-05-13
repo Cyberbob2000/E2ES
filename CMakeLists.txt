@@ -66,7 +66,7 @@ target_link_libraries(keyboard_ctl
     ${CURSES_LIBRARIES}
     )
 add_executable(rl_agent
-        src/rl_agent.cpp.cpp
+        src/rl_agent.cpp
         src/movement/generalmove.cpp
 )
 target_link_libraries(rl_agent
