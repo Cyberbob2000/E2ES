@@ -232,7 +232,7 @@ int main(int argc, char **argv)
     char c = '1';
     if(mission_state == KEYBOARD_CTR){
       if (counter <= 20){
-        char c = myTrajectory[counter];
+        c = myTrajectory[counter];
         cout << c << "This char ! " << endl;
         counter = counter + 1;
       }
