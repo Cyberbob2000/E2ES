@@ -313,7 +313,7 @@ int main(int argc, char **argv)
       cout << publish_pose.pose.position.x << "," << publish_pose.pose.position.y << "," << publish_pose.pose.position.z << endl;
       if(takeoff.finished())
       {
-        cout << "Takeoff finished. My Code !" << endl;
+        cout << "Takeoff finished. My Code ! Updated" << endl;
         mission_state = KEYBOARD_CTR;
         last_request = ros::Time::now();
       }
