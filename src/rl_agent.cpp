@@ -229,7 +229,7 @@ int main(int argc, char **argv)
     //int c = getch_noblocking();
     //fseek(stdin,0,SEEK_END);
     //Fly fix trajectory
-    char c = '0'
+    char c = '0';
     if(mission_state == KEYBOARD_CTR){
       if (counter <= 20){
         char c = myTrajectory[counter];
