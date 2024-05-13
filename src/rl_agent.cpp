@@ -188,9 +188,10 @@ int main(int argc, char **argv)
   arm_cmd.request.value = true;
   cout << "change last_request Arm" << endl;
   ros::Time last_request = ros::Time::now();
-
+  int counter = -1
+  char myTrajectory[]={'1','w','w','w','w','w','w','w','w','w','d','d','d','d','d','d','d','d','d','y','y','y','y','y','y','y'}
   while(ros::ok()){
-
+    counter = counter + 1
     if( current_state.mode != "OFFBOARD" && (ros::Time::now() - last_request > ros::Duration(1.0)))
     {
       if( set_mode_client.call(offb_set_mode) &&
@@ -222,9 +223,14 @@ int main(int argc, char **argv)
     //        KB_TURNLEFT,
     //        KB_TURNRIGHT,
     //timeout(50);
-    fseek(stdin,0,SEEK_END);
-    int c = getch_noblocking();
-    fseek(stdin,0,SEEK_END);
+
+    //Keyboard controll
+    //fseek(stdin,0,SEEK_END);
+    //int c = getch_noblocking();
+    //fseek(stdin,0,SEEK_END);
+    //Fly fix trajectory
+    char c = myTrajectory[counter]
+
     //flushinp();
 
     if (c == '1')
