@@ -65,6 +65,17 @@ target_link_libraries(keyboard_ctl
     ${Sophus_LIBRARIES}
     ${CURSES_LIBRARIES}
     )
+add_executable(rl_agent
+        src/rl_agent.cpp.cpp
+        src/movement/generalmove.cpp
+)
+target_link_libraries(rl_agent
+        ${catkin_LIBRARIES}
+        ${YAML_CPP_LIBRARIES}
+        ${Sophus_LIBRARIES}
+        ${CURSES_LIBRARIES}
+)
+
 
 add_executable(offb
     src/offb.cpp
