@@ -189,7 +189,7 @@ int main(int argc, char **argv)
   cout << "change last_request Arm" << endl;
   ros::Time last_request = ros::Time::now();
   int counter = 0;
-  char myTrajectory[]={'1','w','w','w','w','w','w','w','w','w','d','d','d','d','d','d','d','d','d','y','y','y','y','y','y','y'};
+  char myTrajectory[]={'1','w','w','w','w','w','w','w','w','w','d','d','d','d','d','d','d','d','d','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y'};
   while(ros::ok()){
     cout << counter << endl;
     if( current_state.mode != "OFFBOARD" && (ros::Time::now() - last_request > ros::Duration(1.0)))
@@ -231,7 +231,7 @@ int main(int argc, char **argv)
     //Fly fix trajectory
     char c = '1';
     if(mission_state == KEYBOARD_CTR){
-      if (counter <= 20){
+      if (counter <= 100){
         c = myTrajectory[counter];
         cout << c << "This char ! " << endl;
         counter = counter + 1;
