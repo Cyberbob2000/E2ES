@@ -229,7 +229,7 @@ Visualization Manager:
           Value: false
         - Class: rviz/Marker
           Enabled: true
-          Marker Topic: /esfd_map
+          Marker Topic: /esdf_map
           Name: ESDF_Map
           Namespaces:
             points: true
