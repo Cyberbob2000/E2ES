@@ -1,4 +1,6 @@
 #include <ros/ros.h>
+#include <std_msgs/String.h>
+#include <string>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <mavros_msgs/CommandBool.h>
@@ -92,6 +94,7 @@ static enum MANEUVER{
 } kb_state=KB_NONE;
 
 static mavros_msgs::State current_state;
+static std_msgs::String current_action;
 static bool local_pose_received = false;
 static SE3 latest_pos;
 static geometry_msgs::PoseStamped last_published_pose;
@@ -116,6 +119,11 @@ void local_odom_cb(const geometry_msgs::PoseStampedConstPtr& msg){
                                      msg->pose.orientation.y,msg->pose.orientation.z));
   mtx_states_RW.unlock();
 }
+
+void rl_actions_cb(const std_msgs::String::ConstPtr& msg){
+  current_action = *msg;
+}
+
 
 geometry_msgs::PoseStamped update_pose_from_se3(SE3 se3)
 {
@@ -157,6 +165,9 @@ int main(int argc, char **argv)
   ros::ServiceClient set_mode_client = nh.serviceClient<mavros_msgs::SetMode>
       ("/mavros/set_mode");
 
+  // This is our subscriber to get RL actions
+  ros::Subscriber action_sub = nh.subscribe<std_msgs::String>("/rl_actions", 10, rl_actions_cb);
+
   //the setpoint publishing rate MUST be faster than 2Hz
   ros::Rate rate(update_rate);
   //wait for FCU connection
@@ -188,10 +199,9 @@ int main(int argc, char **argv)
   arm_cmd.request.value = true;
   cout << "change last_request Arm" << endl;
   ros::Time last_request = ros::Time::now();
-  int counter = 0;
-  char myTrajectory[]={'1','w','w','w','w','w','w','w','w','w','d','d','d','d','d','d','d','d','d','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y','y'};
+
   while(ros::ok()){
-    cout << counter << endl;
+
     if( current_state.mode != "OFFBOARD" && (ros::Time::now() - last_request > ros::Duration(1.0)))
     {
       if( set_mode_client.call(offb_set_mode) &&
@@ -223,68 +233,60 @@ int main(int argc, char **argv)
     //        KB_TURNLEFT,
     //        KB_TURNRIGHT,
     //timeout(50);
-
-    //Keyboard controll
-    //fseek(stdin,0,SEEK_END);
-    //int c = getch_noblocking();
-    //fseek(stdin,0,SEEK_END);
-    //Fly fix trajectory
-    char c = '1';
-    if(mission_state == KEYBOARD_CTR){
-      if (counter <= 100){
-        c = myTrajectory[counter];
-        cout << c << "This char ! " << endl;
-        counter = counter + 1;
-      }
-    }
+    // fseek(stdin,0,SEEK_END);
+    // int c = getch_noblocking();
+    // fseek(stdin,0,SEEK_END);
     //flushinp();
 
-    if (c == '1')
+    string c = current_action.data.c_str();
+    ROS_INFO("Received action: %s\n", current_action.data.c_str());
+
+    if (c == "1")
     {
       kb_state=KB_TAKEOFF;
       cout << "kb_takeoff";
     }
-    if (c == '2')
+    if (c == "2")
     {
       kb_state=KB_LAND;
       cout << "kb_land";
     }
-    if (c == 'w' || c == 'W')
+    if (c == "w" || c == "W")
     {
       kb_state=KB_UP;
       cout << "kb_up";
     }
-    if (c == 's' || c == 'S')
+    if (c == "s" || c == "S")
     {
       kb_state=KB_DOWN;
       cout << "kb_down";
     }
-    if (c == 'a' || c == 'A')
+    if (c == "a" || c == "A")
     {
       kb_state=KB_TURNLEFT;
       cout << "kb_turn_left";
     }
-    if (c == 'd' || c == 'D')
+    if (c == "d" || c == "D")
     {
       kb_state=KB_TURNRIGHT;
       cout << "kb_turn_right";
     }
-    if (c == 'y' || c == 'Y')
+    if (c == "y" || c == "Y")
     {
       kb_state=KB_FORWARD;
       cout << "kb_forward";
     }
-    if (c == 'h' || c == 'H')
+    if (c == "h" || c == "H")
     {
       kb_state=KB_BACKWARD;
       cout << "kb_backward";
     }
-    if (c == 'g' || c == 'G')
+    if (c == "g" || c == "G")
     {
       kb_state=KB_LEFT;
       cout << "kb_left";
     }
-    if (c == 'j' || c == 'J')
+    if (c == "j" || c == "J")
     {
       kb_state=KB_RIGHT;
       cout << "kb_right";
@@ -318,9 +320,8 @@ int main(int argc, char **argv)
       cout << publish_pose.pose.position.x << "," << publish_pose.pose.position.y << "," << publish_pose.pose.position.z << endl;
       if(takeoff.finished())
       {
-        cout << "Takeoff finished. My Code ! Updated" << endl;
+        cout << "Takeoff finished" << endl;
         mission_state = KEYBOARD_CTR;
-        counter = counter + 1;
         last_request = ros::Time::now();
       }
     }
