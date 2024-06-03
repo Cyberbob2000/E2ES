@@ -23,6 +23,7 @@
 
     <env name="PX4_SIM_MODEL" value="$(arg vehicle)" />
     <env name="PX4_ESTIMATOR" value="$(arg est)" />
+    <env name="PX4_SIM_SPEED_FACTOR" value = "3" />
 
     <!-- gazebo configs -->
     <arg name="gui" default="true"/>
