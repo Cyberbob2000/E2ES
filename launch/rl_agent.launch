@@ -6,7 +6,7 @@
         <param name="min_x" type="double" value="-20" />
         <param name="max_y" type="double" value="20" />
         <param name="min_y" type="double" value="-20" />
-        <param name="velocity_horizon" type="double" value="10.0" />
+        <param name="velocity_horizon" type="double" value="10" />
         <param name="velocity_vertical" type="double" value="5" />
         <param name="angular_velocity_turn" type="double" value="1.5" />
     </node>
