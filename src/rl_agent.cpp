@@ -24,6 +24,8 @@
 //subscribe local_position/pose
 //publish   setpoint/pose
 #include <termios.h>
+#include <std_msgs/String.h>
+#include <string>
 
 char getch_noblocking()
 {
@@ -96,6 +98,7 @@ static enum MANEUVER{
 static mavros_msgs::State current_state;
 static std_msgs::String current_action;
 static bool local_pose_received = false;
+static std_msgs::String current_action;
 static SE3 latest_pos;
 static geometry_msgs::PoseStamped last_published_pose;
 static geometry_msgs::PoseStamped publish_pose;
@@ -123,7 +126,6 @@ void local_odom_cb(const geometry_msgs::PoseStampedConstPtr& msg){
 void rl_actions_cb(const std_msgs::String::ConstPtr& msg){
   current_action = *msg;
 }
-
 
 geometry_msgs::PoseStamped update_pose_from_se3(SE3 se3)
 {
@@ -199,7 +201,6 @@ int main(int argc, char **argv)
   arm_cmd.request.value = true;
   cout << "change last_request Arm" << endl;
   ros::Time last_request = ros::Time::now();
-
   while(ros::ok()){
 
     if( current_state.mode != "OFFBOARD" && (ros::Time::now() - last_request > ros::Duration(1.0)))
@@ -220,7 +221,7 @@ int main(int argc, char **argv)
         last_request = ros::Time::now();
       }
     }
-    kb_state=KB_NONE;
+    kb_state=KB_TAKEOFF;
     //        KB_NONE,
     //        KB_TAKEOFF,
     //        KB_LAND,
@@ -233,14 +234,24 @@ int main(int argc, char **argv)
     //        KB_TURNLEFT,
     //        KB_TURNRIGHT,
     //timeout(50);
-    // fseek(stdin,0,SEEK_END);
-    // int c = getch_noblocking();
-    // fseek(stdin,0,SEEK_END);
+
+    //Keyboard controll
+    //fseek(stdin,0,SEEK_END);
+    //int c = getch_noblocking();
+    //fseek(stdin,0,SEEK_END);
     //flushinp();
-
-    string c = current_action.data.c_str();
-    ROS_INFO("Received action: %s\n", current_action.data.c_str());
-
+    
+    //Fly fix trajectory
+    string c = "";
+    if (mission_state==KEYBOARD_CTR ){
+      c = current_action.data.c_str();
+      ROS_INFO("Received action: %s\n", current_action.data.c_str());
+      current_action.data = "0";
+    }
+    if (c == "0"){
+      kb_state = KB_NONE;
+      ROS_INFO("Nothing to do!");
+    }
     if (c == "1")
     {
       kb_state=KB_TAKEOFF;
@@ -293,6 +304,10 @@ int main(int argc, char **argv)
     }
     /*takeoff*****************************************************/
     //PLEASE DEFINE THE LANDING PARAMETER HERE
+    cout << endl;
+    cout << "Mission State" << mission_state << endl;
+    cout << "KB State" << kb_state << endl;
+    cout << endl;
     if(mission_state==IDLE)
     {
       if(kb_state==KB_TAKEOFF)
