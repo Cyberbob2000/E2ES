@@ -12,6 +12,6 @@ echo $GAZEBO_MODEL_PATH
 echo $GAZEBO_PLUGIN_PATH
 # roslaunch e2es rviz.launch &
 # sleep 2
-roslaunch e2es E2ES.launch pause:=false align_depth:=true
+roslaunch e2es E2ES_headless.launch pause:=false align_depth:=true
 
 
