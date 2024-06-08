@@ -98,7 +98,6 @@ static enum MANEUVER{
 static mavros_msgs::State current_state;
 static std_msgs::String current_action;
 static bool local_pose_received = false;
-static std_msgs::String current_action;
 static SE3 latest_pos;
 static geometry_msgs::PoseStamped last_published_pose;
 static geometry_msgs::PoseStamped publish_pose;
